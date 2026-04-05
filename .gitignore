@@ -29,3 +29,6 @@ dist/
 .idea/
 *.swp
 *.swo
+
+# Combined ENV for Vercel
+comb.env
