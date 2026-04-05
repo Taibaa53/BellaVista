@@ -12,7 +12,7 @@
     ],
     "functions": {
         "server/src/index.js": {
-            "runtime": "vercel-node@latest"
+            "runtime": "nodejs20.x"
         }
     }
 }
