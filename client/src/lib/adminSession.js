@@ -1,0 +1,13 @@
+const KEY = "bv_admin_token";
+
+export function getAdminToken() {
+  return sessionStorage.getItem(KEY);
+}
+
+export function setAdminToken(token) {
+  sessionStorage.setItem(KEY, token);
+}
+
+export function clearAdminToken() {
+  sessionStorage.removeItem(KEY);
+}
