@@ -2,10 +2,14 @@ import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import express from "express";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.join(__dirname, "..", ".env") });
 import cors from "cors";
+
+// Only load dotenv from file in local development
+if (process.env.NODE_ENV !== "production") {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  dotenv.config({ path: path.join(__dirname, "..", ".env") });
+}
+
 import menuRoutes from "./routes/menuRoutes.js";
 import {
   createMenuItem,
@@ -22,14 +26,23 @@ const PORT = process.env.PORT || 5000;
 app.use(cors({ origin: true }));
 app.use(express.json());
 
+// Create an API router to handle the /api prefix from Vercel
+const apiRouter = express.Router();
+
+apiRouter.get("/health", (_req, res) => res.json({ ok: true }));
+apiRouter.use("/menu", menuRoutes);
+apiRouter.post("/order", createOrder);
+apiRouter.post("/admin/login", adminLogin);
+apiRouter.get("/orders", requireAdmin, listOrders);
+apiRouter.post("/admin/menu", requireAdmin, createMenuItem);
+apiRouter.put("/admin/menu/:id", requireAdmin, updateMenuItem);
+apiRouter.delete("/admin/menu/:id", requireAdmin, deleteMenuItem);
+
+// Mount the API router on /api
+app.use("/api", apiRouter);
+
+// Fallback for direct routes (if any)
 app.get("/health", (_req, res) => res.json({ ok: true }));
-app.use("/menu", menuRoutes);
-app.post("/order", createOrder);
-app.post("/admin/login", adminLogin);
-app.get("/orders", requireAdmin, listOrders);
-app.post("/admin/menu", requireAdmin, createMenuItem);
-app.put("/admin/menu/:id", requireAdmin, updateMenuItem);
-app.delete("/admin/menu/:id", requireAdmin, deleteMenuItem);
 
 app.use((err, _req, res, _next) => {
   console.error(err);
@@ -37,6 +50,7 @@ app.use((err, _req, res, _next) => {
 });
 
 export default app;
+
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => {
     console.log(`API http://localhost:${PORT}`);
