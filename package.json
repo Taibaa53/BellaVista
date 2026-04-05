@@ -2,11 +2,16 @@
   "name": "bellavista-root",
   "version": "1.0.0",
   "scripts": {
-    "build": "cd client && npm install && npm run build && cd ../server && npm install && npx prisma generate"
+    "build": "npm install && cd client && npm install && npm run build && cd ../server && npm install && npx prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
-    "prisma": "^6.5.0"
+    "prisma": "^6.5.0",
+    "express": "^4.21.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^6.9.16"
   },
   "engines": {
     "node": "20.x"
